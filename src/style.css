@@ -27,27 +27,23 @@ a:hover {
   box-sizing: border-box;
 }
 
-html {
-  font-family: sans-serif;
-}
-
 body {
   margin: 0;
 }
 
-label,
-input,
-textarea {
+project-input::part(label),
+project-input::part(input),
+project-input::part(textarea) {
   display: block;
   margin: 0.5rem 0;
 }
 
-label {
+project-input::part(label) {
   font-weight: bold;
 }
 
-input,
-textarea {
+project-input::part(input),
+project-input::part(textarea) {
   font: inherit;
   padding: 0.2rem 0.4rem;
   width: 100%;
@@ -55,27 +51,28 @@ textarea {
   border: 1px solid #ccc;
 }
 
-input:focus,
-textarea:focus {
+project-input::part(input):focus,
+project-input::part(textarea):focus {
   outline: none;
   background: #fff5f9;
 }
 
-button {
+project-input::part(button) {
   font: inherit;
   background: #ff0062;
   border: 1px solid #ff0062;
   cursor: pointer;
   color: white;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 2rem;
 }
 
-button:focus {
+project-input::part(button):focus {
   outline: none;
 }
 
-button:hover,
-button:active {
+project-input::part(button):hover,
+project-input::part(button):active {
   background: #a80041;
   border-color: #a80041;
 }
@@ -144,7 +141,8 @@ button:active {
   background: #d6e1ff;
 }
 
-#user-input {
+#user-input,
+project-input::part(form) {
   margin: 1rem;
   padding: 1rem;
   border: 1px solid #ff0062;
