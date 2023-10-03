@@ -11,16 +11,14 @@
       <template id="single-project">
         <li></li>
       </template>
-      <template id="project-list">
-        <section class="projects">
-          <header>
-            <h2></h2>
-          </header>
-          <ul></ul>
-        </section>
-      </template>
       <div id="app">
-        <project-input></project-input>
+        <project-input>
+          <span slot="label-title">Title</span>
+          <span slot="label-description">Description</span>
+          <span slot="label-people">People</span>
+        </project-input>
+        <active-project-list></active-project-list>
+        <finished-project-list></finished-project-list>
       </div>
     </body>
     <script type="module" src="/src/main.ts"></script>
