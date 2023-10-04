@@ -1,3 +1,4 @@
+import { Component } from './component'
 import { projectState } from '../state'
 import type { Validatable } from '../../types'
 
@@ -81,7 +82,7 @@ template.innerHTML = `
   </form>`
 
 //  Autobind decorator
-function autobind(_targed: unknown, _methodName: string, descriptor: PropertyDescriptor) {
+export function autobind(_targed: unknown, _methodName: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value
   const adjustedDescriptor: PropertyDescriptor = {
     configurable: true,
@@ -116,25 +117,20 @@ function validate(input: Validatable) {
 }
 
 //ProjectInpur Class
-export class ProjectInput extends HTMLElement {
-  formElement: HTMLFormElement
+export class ProjectInput extends Component<HTMLFormElement> {
   titleInputElement: HTMLInputElement
   descriptionInputElement: HTMLInputElement
   peopleInputElement: HTMLInputElement
 
   constructor() {
-    super()
-    const shadow = this.attachShadow({ mode: 'open' })
-    shadow.append(template.content.cloneNode(true))
-
-    this.formElement = shadow.querySelector('#user-id')! as HTMLFormElement
-    this.titleInputElement = shadow.querySelector('#title')! as HTMLInputElement
-    this.descriptionInputElement = shadow.querySelector('#description')! as HTMLInputElement
-    this.peopleInputElement = shadow.querySelector('#people')! as HTMLInputElement
+    super(template, 'user-id')
+    this.titleInputElement = this.shadow.querySelector('#title')! as HTMLInputElement
+    this.descriptionInputElement = this.shadow.querySelector('#description')! as HTMLInputElement
+    this.peopleInputElement = this.shadow.querySelector('#people')! as HTMLInputElement
   }
 
   connectedCallback() {
-    this.formElement.addEventListener('submit', this.submitHandler)
+    this.element.addEventListener('submit', this.submitHandler)
   }
 
   @autobind

@@ -1,28 +1,34 @@
-abstract class Component<T extends HTMLElement, U extends HTMLElement> {
-  templateElement: HTMLTemplateElement
-  hostElement: T
-  element: U
+export abstract class Component<T extends HTMLElement> extends HTMLElement {
+  element: T
+  shadow: ShadowRoot
 
   constructor(
-    templateId: string,
-    hostElementId: string,
-    insertAtStart: boolean,
+    public templateElement: HTMLTemplateElement,
+    elementId: string,
     newElementId?: string,
   ) {
-    this.templateElement = document.getElementById(templateId)! as HTMLTemplateElement
-    this.hostElement = document.getElementById(hostElementId)! as T
-
-    const importedNode = document.importNode(this.templateElement.content, true)
-    this.element = importedNode.firstElementChild as U
+    super()
+    this.shadow = this.attachShadow({ mode: 'open' })
+    this.shadow.append(templateElement.content.cloneNode(true))
+    this.element = this.shadow.querySelector(`#${elementId}`)! as T
     if (newElementId) {
       this.element.id = newElementId
     }
-
-    this.attach(insertAtStart)
   }
+}
 
-  private attach(isAtBeginning: boolean) {
-    this.hostElement.insertAdjacentElement(isAtBeginning ? 'afterbegin' : 'beforeend', this.element)
+export abstract class ComponentDOM<T extends HTMLElement> {
+  element: T
+
+  constructor(
+    public templateElement: HTMLTemplateElement,
+    newElementId?: string,
+  ) {
+    const importedNode = document.importNode(this.templateElement.content, true)
+    this.element = importedNode.firstElementChild as T
+    if (newElementId) {
+      this.element.id = newElementId
+    }
   }
 
   abstract configure(): void

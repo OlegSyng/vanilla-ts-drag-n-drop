@@ -8,19 +8,13 @@
     <title>ProjectManager</title>
   </head>
   <body>
-      <template id="single-project">
-        <li></li>
-      </template>
-      <div id="app">
-        <project-input>
-          <span slot="label-title">Title</span>
-          <span slot="label-description">Description</span>
-          <span slot="label-people">People</span>
-        </project-input>
-        <active-project-list></active-project-list>
-        <finished-project-list></finished-project-list>
-      </div>
-    </body>
+    <project-input>
+      <span slot="label-title">Title</span>
+      <span slot="label-description">Description</span>
+      <span slot="label-people">People</span>
+    </project-input>
+    <active-project-list></active-project-list>
+    <finished-project-list></finished-project-list>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

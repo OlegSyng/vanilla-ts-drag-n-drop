@@ -1,5 +1,8 @@
+import { Component } from './component'
 import { projectState } from '../state'
-import { ProjectStatus, type ListType, type Project } from '../../types'
+import { ProjectStatus, type ListType, type Project, DragTarget } from '../../types'
+import { ProjectItem } from './projectItem'
+import { autobind } from './projectInput'
 
 const template = document.createElement('template')
 template.innerHTML = `
@@ -32,6 +35,7 @@ template.innerHTML = `
         box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.26);
         padding: 1rem;
         margin: 1rem;
+        background: white;
       }
       
       .projects li h2 {
@@ -52,6 +56,10 @@ template.innerHTML = `
         margin: 0;
       }
 
+      .droppable {
+        background: #ffe3ee;
+      }
+
       #finished-projects {
         border-color: #0044ff;
       }
@@ -59,8 +67,12 @@ template.innerHTML = `
       #finished-projects header {
         background: #0044ff;
       }
+
+      #finished-projects .droppable {
+        background: #d6e1ff;
+      }
     </style>
-    <section class="projects">
+    <section class="projects" id='projects'>
         <header>
             <h2></h2>
         </header>
@@ -68,17 +80,18 @@ template.innerHTML = `
     </section>
 `
 
-export class ProjectList extends HTMLElement {
-  element: HTMLElement
+export class ProjectList extends Component<HTMLElement> implements DragTarget {
+  ulElement: HTMLUListElement
   assignedProjects: Project[]
 
+  static get observedAttributes() {
+    return ['']
+  }
+
   constructor(private type: ListType) {
-    super()
-    const shadow = this.attachShadow({ mode: 'open' })
-    shadow.append(template.content.cloneNode(true))
-    this.element = shadow.querySelector('section')! as HTMLElement
-    this.element.id = `${this.type}-projects`
+    super(template, 'projects', `${type}-projects`)
     this.assignedProjects = []
+    this.ulElement = this.element.querySelector('ul')! as HTMLUListElement
 
     projectState.addListener((projects: Project[]) => {
       const relevantProjects = projects.filter((project) => {
@@ -94,17 +107,41 @@ export class ProjectList extends HTMLElement {
 
   connectedCallback() {
     const listId = `${this.type}-projects-list`
-    this.element.querySelector('ul')!.id = listId
+    this.ulElement.id = listId
     this.element.querySelector('h2')!.textContent = this.type + ' Projects'
+    this.ulElement.addEventListener('dragover', this.dragOverHandler)
+    this.ulElement.addEventListener('dragleave', this.dragLeaveHandler)
+    this.ulElement.addEventListener('drop', this.dropHandler)
+  }
+
+  @autobind
+  dragOverHandler(event: DragEvent): void {
+    if (event.dataTransfer && event.dataTransfer.types[0] === 'text/plain') {
+      event.preventDefault()
+      this.ulElement.classList.add('droppable')
+    }
+  }
+
+  @autobind
+  dropHandler(event: DragEvent): void {
+    const projectId = event.dataTransfer!.getData('text/plain')
+    projectState.moveProject(
+      projectId,
+      this.type === 'active' ? ProjectStatus.Active : ProjectStatus.Finished,
+    )
+  }
+
+  @autobind
+  dragLeaveHandler(_event: DragEvent): void {
+    this.ulElement.classList.remove('droppable')
   }
 
   private renderProjects() {
     const listEl = this.element.querySelector(`#${this.type}-projects-list`)! as HTMLUListElement
     listEl.innerHTML = ''
     for (const project of this.assignedProjects) {
-      const listItem = document.createElement('li')
-      listItem.textContent = project.title
-      listEl.appendChild(listItem)
+      const liElement = new ProjectItem(project).element
+      listEl.appendChild(liElement)
     }
   }
 }
