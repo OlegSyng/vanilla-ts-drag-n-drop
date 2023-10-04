@@ -36,6 +36,7 @@ export class ProjectItem extends ComponentDOM<HTMLLIElement> implements Draggabl
     event.dataTransfer!.effectAllowed = 'move'
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   dragEndHandler(_event: DragEvent): void {
     console.log('drag end')
   }

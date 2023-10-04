@@ -132,6 +132,7 @@ export class ProjectList extends Component<HTMLElement> implements DragTarget {
   }
 
   @autobind
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   dragLeaveHandler(_event: DragEvent): void {
     this.ulElement.classList.remove('droppable')
   }
